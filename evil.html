@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCÜLWING - EVIL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --mil-spec: #4b69ff; --restricted: #8847ff; --classified: #d32ee6;
+            --covert: #eb4b4b; --gold: #ffb400;
+            --divinity: #32cd32;
+            --bubble-bg: #ffffff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #0a0a0a;
+            background-image: url('./images/zzz2.png'); 
+            background-attachment: fixed; background-size: cover;
+            color: #ffffff; min-height: 100vh; overflow-x: hidden;
+        }
+
+        #clipboardToast {
+            position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-100px);
+            background: white; color: black; padding: 12px 30px; border-radius: 50px;
+            font-weight: 600; font-size: 0.9rem; z-index: 10001; opacity: 0;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        #clipboardToast.visible { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        .header-container { 
+            display: flex; justify-content: center; align-items: center;
+            padding: clamp(20px, 5vh, 40px) 20px; background: rgba(0,0,0,0.6); 
+            position: relative; z-index: 10; 
+        }
+        .header-video { width: clamp(120px, 15vw, 180px); border-radius: 50%; cursor: pointer; transition: transform 0.3s; }
+
+        .case-opening-section { display: flex; flex-direction: column; align-items: center; padding: clamp(20px, 5vh, 40px) 10px; }
+        
+        .viewport-scaler {
+            width: 95vw; max-width: 1000px;
+            transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            will-change: transform;
+            z-index: 5;
+        }
+        .viewport-scaler.expanding { transform: scale(1.12) translateY(10px); z-index: 50; }
+
+        .case-viewport {
+            width: 100%; height: clamp(140px, 18vh, 180px); 
+            background: rgba(0,0,0,0.85); border-top: 2px solid #222; border-bottom: 2px solid #222;
+            position: relative; overflow: hidden; display: flex; align-items: center;
+            box-shadow: inset 0 0 50px #000; transform-style: preserve-3d; perspective: 1200px;
+        }
+
+        .selector-line {
+            position: absolute; left: 50%; transform: translateX(-50%);
+            width: 4px; height: 100%; background: #ffb400; z-index: 20; 
+            box-shadow: 0 0 20px #ffb400; pointer-events: none;
+        }
+
+        .items-shuffler { display: flex; gap: 0; will-change: transform; pointer-events: none; }
+        .shuffle-item {
+            min-width: 200px; width: 200px; 
+            height: clamp(120px, 16vh, 160px); display: flex; align-items: center; 
+            justify-content: center; border-right: 1px solid rgba(255,255,255,0.05); padding: 20px;
+        }
+        .shuffle-item img { max-width: 85%; max-height: 85%; object-fit: contain; }
+
+        @keyframes divinitySlide {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+        .rarity-divinity { 
+            border-bottom: 5px solid var(--divinity);
+            background: linear-gradient(90deg, #000 0%, #32cd32 50%, #000 100%);
+            background-size: 200% 100%;
+            animation: divinitySlide 1.5s linear infinite reverse;
+        }
+
+        .rarity-mil-spec { border-bottom: 5px solid var(--mil-spec); background: radial-gradient(circle, rgba(75,105,255,0.15) 0%, transparent 75%); }
+        .rarity-restricted { border-bottom: 5px solid var(--restricted); background: radial-gradient(circle, rgba(136,71,255,0.15) 0%, transparent 75%); }
+        .rarity-classified { border-bottom: 5px solid var(--classified); background: radial-gradient(circle, rgba(211,46,230,0.15) 0%, transparent 75%); }
+        .rarity-covert { border-bottom: 5px solid var(--covert); background: radial-gradient(circle, rgba(235,75,75,0.15) 0%, transparent 75%); }
+        .rarity-gold { border-bottom: 5px solid var(--gold); background: radial-gradient(circle, rgba(255,180,0,0.2) 0%, transparent 75%); }
+
+        .unboxed-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.96);
+            z-index: 9999; display: none; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.4s ease; cursor: pointer;
+        }
+        .unboxed-overlay.active { opacity: 1; display: flex; }
+        
+        #captureArea { 
+            cursor: default; width: 90vw; max-width: 600px; padding: clamp(30px, 8vw, 60px); 
+            border-radius: 40px; text-align: center; border: 2px solid transparent; 
+            transform-style: preserve-3d; perspective: 1200px;
+            transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .rarity-divinity-win { background: linear-gradient(90deg, rgba(0,0,0,0.8) 0%, rgba(50,205,50,0.3) 50%, rgba(0,0,0,0.8) 100%); background-size: 200% 100%; animation: divinitySlide 1s linear infinite reverse; border-color: var(--divinity) !important; box-shadow: 0 0 40px rgba(50, 205, 50, 0.4); }
+        .rarity-mil-spec-win { background: radial-gradient(circle, rgba(75,105,255,0.2) 0%, rgba(10,10,10,0.85) 100%); border-color: var(--mil-spec) !important; }
+        .rarity-restricted-win { background: radial-gradient(circle, rgba(136,71,255,0.2) 0%, rgba(10,10,10,0.85) 100%); border-color: var(--restricted) !important; }
+        .rarity-classified-win { background: radial-gradient(circle, rgba(211,46,230,0.2) 0%, rgba(10,10,10,0.85) 100%); border-color: var(--classified) !important; }
+        .rarity-covert-win { background: radial-gradient(circle, rgba(235,75,75,0.2) 0%, rgba(10,10,10,0.85) 100%); border-color: var(--covert) !important; }
+        .rarity-gold-win { background: radial-gradient(circle, rgba(255,180,0,0.2) 0%, rgba(10,10,10,0.85) 100%); border-color: var(--gold) !important; }
+
+        .unboxed-image-box { width: 100%; height: auto; aspect-ratio: 4/3; max-height: 350px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+        #unboxedImage { max-width: 90%; max-height: 100%; filter: drop-shadow(0 0 30px rgba(0,0,0,0.8)); }
+
+        @keyframes rainbow-flash {
+            0% { background: #ff0000; box-shadow: 0 0 20px #ff0000; }
+            20% { background: #ff00ff; box-shadow: 0 0 20px #ff00ff; }
+            40% { background: #0000ff; box-shadow: 0 0 20px #0000ff; }
+            60% { background: #00ffff; box-shadow: 0 0 20px #00ffff; }
+            80% { background: #00ff00; box-shadow: 0 0 20px #00ff00; }
+            100% { background: #ff0000; box-shadow: 0 0 20px #ff0000; }
+        }
+        .rainbow-active { animation: rainbow-flash 0.5s linear infinite !important; }
+
+        /* INVENTORY & STATS */
+        .inventory-wrapper { max-width: 1000px; margin: 60px auto; padding: 0 20px; overflow: visible; }
+        .inventory-header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px; overflow: visible; position: relative; }
+        .inventory-title { opacity: 0.6; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px; }
+
+        .sort-btn {
+            background: white; color: black; border: none; padding: 10px 18px; 
+            border-radius: 8px; cursor: pointer; display: flex; align-items: center; 
+            gap: 10px; font-weight: 600; font-size: 0.75rem; transition: 0.2s;
+        }
+        .sort-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,255,255,0.3); }
+
+        .inventory-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 20px; overflow: visible; }
+        .stats-item {
+            display: flex; flex-direction: column; align-items: center; position: relative;
+            background: #111; padding: 15px; border-radius: 12px; transition: 0.3s;
+            transform-style: preserve-3d; transform: perspective(1000px);
+            overflow: visible;
+        }
+        .stats-item:hover { transform: perspective(1000px) scale(1.05) translateY(-5px); z-index: 100; }
+        
+        .stats-bubble {
+            position: absolute; bottom: 120%; left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: var(--bubble-bg); color: black;
+            padding: 12px; border-radius: 8px; font-size: 0.7rem; font-weight: 600;
+            opacity: 0; visibility: hidden; transition: 0.3s ease-out;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6); pointer-events: none; z-index: 999999;
+            width: 180px; text-align: left; border: 1px solid rgba(0,0,0,0.1);
+        }
+        .stats-bubble::after {
+            content: ""; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+            border-width: 6px; border-style: solid; border-color: var(--bubble-bg) transparent transparent transparent;
+        }
+        /* Fix for clipping and visibility */
+        .stats-item:hover .stats-bubble { 
+            opacity: 1; 
+            visibility: visible; 
+            transform: translateX(-50%) translateY(0px) translateZ(100px); 
+        }
+
+        .btn-container { display: flex; justify-content: center; margin-top: 30px; gap: 20px; }
+        .box-btn { width: 65px; height: 65px; background: white; border: none; border-radius: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: black; transition: 0.3s; }
+        .box-btn:hover { transform: scale(1.1); }
+        
+        #userNameInput { background: rgba(255,255,255,0.05); border: 1px solid #333; color: white; padding: 12px; border-radius: 10px; width: 280px; text-align: center; margin-top: 20px; outline: none; }
+        .footer-slim { text-align: center; padding: 60px; font-size: 0.8rem; opacity: 0.4; }
+    </style>
+</head>
+<body>
+
+    <div id="clipboardToast">Clipboard Saved!</div>
+
+    <header class="header-container">
+        <a href="index.html"><video class="header-video" autoplay loop muted playsinline><source src="./video/yo.webm" type="video/webm"></video></a>
+    </header>
+
+    <main class="case-opening-section">
+        <div class="viewport-scaler" id="viewportScaler">
+            <div class="case-viewport" id="caseBase">
+                <div class="selector-line"></div>
+                <div id="shuffler" class="items-shuffler"></div>
+            </div>
+        </div>
+        
+        <div class="btn-container">
+            <button id="spinButton" class="box-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10 20-1.25-2.5L6 18"/><path d="M10 4 8.75 6.5 6 6"/><path d="m14 20 1.25-2.5L18 18"/><path d="m14 4 1.25 2.5L18 6"/><path d="m17 21-3-6h-4"/><path d="m17 3-3 6 1.5 3"/><path d="M2 12h6.5L10 9"/><path d="m20 10-1.5 2 1.5 2"/><path d="M22 12h-6.5L14 15"/><path d="m4 10 1.5 2L4 14"/><path d="m7 21 3-6-1.5-3"/><path d="m7 3 3 6h4"/></svg>
+            </button>
+        </div>
+    </main>
+
+    <div id="unboxedModal" class="unboxed-overlay">
+        <div style="display: flex; flex-direction: column; align-items: center;">
+            <div id="captureArea">
+                <div class="unboxed-image-box">
+                    <img src="" id="unboxedImage">
+                </div>
+                <h1 id="unboxedName">Item Name</h1>
+                <div style="display: flex; justify-content: center; gap: 30px; margin: 15px 0; font-family: monospace; font-size: 0.85rem; color: #888;">
+                    <span>FLOAT: <b style="color:white" id="floatDisp">0.00</b></span>
+                    <span>PATTERN: <b style="color:white" id="patternDisp">000</b></span>
+                </div>
+                <div id="screenshotUserTag"></div>
+            </div>
+
+            <input type="text" id="userNameInput" maxlength="60" placeholder="enter yo name" onclick="event.stopPropagation()">
+
+            <div class="btn-container" onclick="event.stopPropagation()">
+                <button id="collectButton" class="box-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5l10 -10"/></svg>
+                </button>
+                <button id="shareButton" class="box-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="inventory-wrapper">
+        <div class="inventory-header-row">
+            <h2 class="inventory-title">Inventory</h2>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <div class="stats-item" style="background: none; padding: 0; border: none;">
+                    <button class="sort-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        SESSION STATS
+                    </button>
+                    <div class="stats-bubble" id="sessionStatsBubble">
+                        <b style="display: block; text-align: center; margin-bottom: 8px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 5px;">SESSION DATA</b>
+                        <div style="font-size: 0.75rem; line-height: 1.6;">
+                            OPENED: <span id="statsOpened" style="float: right; color: black;">0</span><br>
+                            TIME: <span id="statsTime" style="float: right; color: black;">0m 0s</span>
+                            <div style="margin-top: 8px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 8px;">
+                                <span style="color: var(--mil-spec);">MIL-SPEC:</span> <span id="count-mil-spec" style="float: right; color: black;">0</span><br>
+                                <span style="color: var(--restricted);">RESTRICTED:</span> <span id="count-restricted" style="float: right; color: black;">0</span><br>
+                                <span style="color: var(--classified);">CLASSIFIED:</span> <span id="count-classified" style="float: right; color: black;">0</span><br>
+                                <span style="color: var(--covert);">COVERT:</span> <span id="count-covert" style="float: right; color: black;">0</span><br>
+                                <span style="color: var(--gold);">GOLD:</span> <span id="count-gold" style="float: right; color: black;">0</span><br>
+                                <span style="color: var(--divinity); font-weight: bold;">DIVINITY:</span> <span id="count-divinity" style="float: right; color: black;">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="sortToggle" class="sort-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5h10"/><path d="M11 9h7"/><path d="M11 13h4"/><path d="m3 17 3 3 3-3"/><path d="M6 18V4"/></svg>
+                    SORT: NEWEST
+                </button>
+            </div>
+        </div>
+        <div id="inventoryGrid" class="inventory-grid"></div>
+    </div>
+
+    <footer class="footer-slim">SCÜLWING 2025 ©</footer>
+    <script src="evil.js"></script>
+</body>
+</html>

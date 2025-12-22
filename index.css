@@ -1,0 +1,139 @@
+/* ---------- PAGE BACKGROUND ---------- */
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Arial';
+  overflow: hidden;
+}
+
+/* ---------- PROFILE CARD ---------- */
+.profile-card {
+  position: relative;
+  width: 320px;
+  background: #ffffff10;
+  border-radius: 20px;
+  padding: 30px 20px;
+  text-align: center;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 0 30px rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.15);
+  overflow: hidden;
+  transition: transform 0.2s ease;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  cursor: pointer;
+}
+
+/* ---------- HOLOGRAPHIC BORDER GLOW ---------- */
+.profile-card::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from 0deg,
+    #ff00ea,
+    #00e5ff,
+    #00ff95,
+    #ffe600,
+    #ff00ea
+  );
+  filter: blur(25px);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: -1;
+}
+
+.profile-card:hover::before {
+  opacity: 1;
+}
+
+/* ---------- LIGHT SWEEP SHINE ---------- */
+.profile-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 150%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.25) 50%,
+    transparent 100%
+  );
+  transform: skewX(-20deg);
+  transition: 0.6s;
+}
+
+.profile-card:hover::after {
+  left: 150%;
+}
+
+/* ---------- CARD HEADER ---------- */
+.card-header {
+  height: 80px;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  border-radius: 15px;
+  margin-bottom: -50px;
+}
+
+/* ---------- AVATAR ---------- */
+.avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 5px solid white;
+  object-fit: cover;
+  margin-top: -40px;
+  transform: translateZ(40px);
+}
+
+/* ---------- TEXT ---------- */
+h1 {
+  color: white;
+  margin-top: 10px;
+  transform: translateZ(30px);
+}
+
+.role {
+  color: #cccccc;
+  margin-bottom: 20px;
+  transform: translateZ(30px);
+}
+
+/* ---------- BUTTONS ---------- */
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  transform: translateZ(20px);
+}
+
+.btn {
+  padding: 10px 20px;
+  background: #2575fc;
+  color: white;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.btn:hover {
+  background: #6a11cb;
+}
+
+.btn.outline {
+  background: transparent;
+  border: 2px solid #2575fc;
+}
+
+.btn.outline:hover {
+  background: #2575fc;
+}

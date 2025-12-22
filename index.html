@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCÜLWING - PAGE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --bubble-bg: rgba(0, 0, 0, 0.9);
+            --header-transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-image: url('./images/zzz2.png'); 
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* LIVE BLACK FLICKER */
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: black; z-index: -1; pointer-events: none;
+            animation: liveSubtleFlicker 4s infinite ease-in-out;
+        }
+        @keyframes liveSubtleFlicker {
+            0%, 100% { opacity: 0.02; }
+            50% { opacity: 0.08; }
+        }
+
+        /* HEADER */
+        .header-container {
+            text-align: center;
+            padding: 20px;
+            background-color: rgba(2, 2, 2, 1); 
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            position: sticky; top: 0; 
+            z-index: 100;
+            transition: var(--header-transition);
+            overflow: hidden;
+            max-height: 1000px;
+            will-change: max-height, padding;
+        }
+
+        .header-container.collapsed {
+            max-height: 115px; 
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        .test { 
+            width: 60%; max-width: 350px; height: auto; display: block; margin: 0 auto 10px auto; 
+            transition: var(--header-transition);
+            opacity: 1;
+        }
+        .header-container.collapsed .test {
+            transform: scale(0);
+            height: 0;
+            margin: 0;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* LINKS */
+        .links-container {
+            display: flex; justify-content: center; align-items: center;
+            flex-wrap: wrap; gap: 30px; margin-top: 10px;
+            transition: var(--header-transition);
+        }
+        .header-container.collapsed .links-container {
+            margin-top: 5px;
+            margin-bottom: 10px;
+        }
+
+        .link-item {
+            display: flex; flex-direction: column; align-items: center;
+            text-decoration: none; position: relative;
+            transition: transform 0.1s ease-out;
+            transform-style: preserve-3d; transform: perspective(1000px);
+        }
+        .link-bubble {
+            position: absolute; bottom: 120%; left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: var(--bubble-bg); color: white;
+            filter: invert(100%);
+            padding: 6px 14px; border-radius: 8px;
+            font-size: 0.75rem; font-weight: 600; white-space: nowrap;
+            opacity: 0; visibility: hidden; transition: 0.3s ease-out;
+            box-shadow: 0 4px 15px rgba(0,0,0,0); pointer-events: none;
+            z-index: 1000;
+        }
+        .link-bubble::after {
+            content: ""; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+            border-width: 6px; border-style: solid; border-color: var(--bubble-bg) transparent transparent transparent;
+        }
+        .link-item:hover .link-bubble { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0px); }
+        .link-icon { width: 28px; height: 28px; object-fit: contain; pointer-events: none; }
+
+        /* DESCRIPTION */
+        .page-description p { 
+            font-size: 0.85rem; font-weight: 300; line-height: 1.4; color: #fafafa; 
+            transition: var(--header-transition);
+            max-height: 300px;
+            opacity: 1;
+            margin-top: 15px;
+        }
+        .header-container.collapsed .page-description p {
+            max-height: 0;
+            opacity: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .description-splitter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            width: 90%;
+            max-width: 500px;
+            margin: 20px auto 5px auto;
+            cursor: pointer;
+            padding: 10px 0;
+            transition: var(--header-transition);
+        }
+
+        .splitter-line {
+            flex-grow: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+        }
+
+        .splitter-icon-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent; 
+            border: none; 
+            transition: transform 0.3s ease;
+        }
+
+        .splitter-svg {
+            color: white; 
+            filter: drop-shadow(0 0 5px rgba(255,255,255,0.3));
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), filter 0.3s ease;
+        }
+
+        .description-splitter:hover .splitter-svg {
+            transform: scale(1.2) rotate(30deg);
+            filter: drop-shadow(0 0 8px rgba(255,255,255,0.8));
+        }
+
+        .header-container.collapsed .splitter-svg {
+            transform: rotate(180deg);
+        }
+
+        /* GALLERY & FAVORITES */
+        .gallery-container {
+            flex: 1;
+            display: flex; flex-wrap: wrap; justify-content: center;
+            gap: 40px; max-width: 1400px; margin: 20px auto; padding: 10px 20px 40px 20px;
+        }
+        .portfolio-item {
+            width: 350px; max-width: 90vw; height: fit-content; 
+            position: relative; cursor: pointer; background: transparent;
+            transition: transform var(--rotation-speed) ease-out, box-shadow 0.3s;
+            transform-style: preserve-3d; transform: perspective(1000px);
+            display: block; line-height: 0;
+            z-index: 1;
+        }
+        .portfolio-item:hover { z-index: 200; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .portfolio-item img { width: 100%; height: auto; display: block; border-radius: 12px; pointer-events: none; }
+        
+        .favorite-icon-wrapper {
+            position: absolute; top: -15px; left: -15px; z-index: 50;
+            transform: translateZ(60px); filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+        }
+        .favorite-icon { width: 24px; height: 24px; display: block; }
+        .fav-bubble {
+            position: absolute; bottom: 130%; left: 0;
+            background: var(--bubble-bg); color: white;
+            filter: invert(100%);
+            padding: 4px 10px; border-radius: 6px;
+            font-size: 0.65rem; font-weight: 600; white-space: nowrap;
+            opacity: 0; visibility: hidden; transition: 0.2s ease-out;
+            pointer-events: none; line-height: normal;
+            z-index: 300; box-shadow: 0 4px 10px rgba(0,0,0,0);
+        }
+        .fav-bubble::after {
+            content: ""; position: absolute; top: 100%; left: 10px;
+            border-width: 5px; border-style: solid; border-color: var(--bubble-bg) transparent transparent transparent;
+        }
+        .favorite-icon-wrapper:hover .fav-bubble { opacity: 1; visibility: visible; transform: translateY(-5px); }
+        
+        .info-box {
+            position: absolute; bottom: 0; width: 100%; height: 45px;
+            padding: 5px; background: rgba(0,0,0,0.8); color: white; opacity: 0; 
+            transition: 0.3s; border-radius: 0 0 12px 12px; transform: translateZ(30px);
+            pointer-events: none; display: flex; align-items: center; justify-content: center;
+            line-height: normal;
+        }
+        .info-box p { font-size: 0.7rem; text-align: center; width: 90%; }
+        .portfolio-item:hover .info-box { opacity: 1; }
+
+        .footer-slim {
+            width: 100%; padding: 15px 0; text-align: center;
+            font-size: 0.75rem; font-weight: 300; color: rgba(250, 250, 250, 0.8);
+            letter-spacing: 1.5px; background: rgba(250, 250, 250, 0); backdrop-filter: blur(5px);
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.7); display: flex; justify-content: center; 
+            align-items: center; z-index: 2000; visibility: hidden; opacity: 0; transition: 0.3s;
+        }
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+        
+        .modal-content { 
+            position: relative;
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px); 
+            -webkit-backdrop-filter: blur(25px); width: 85vw; aspect-ratio: 16/9; 
+            display: flex; flex-direction: column; padding: 20px; border-radius: 20px;
+            transform-style: preserve-3d; transition: transform 0.2s ease-out;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .image-container { flex-grow: 1; overflow: hidden; display: flex; justify-content: center; align-items: center; cursor: grab; user-select: none; }
+        .zoomable-image { max-width: 85%; max-height: 85%; transition: transform 0.1s ease-out; pointer-events: none; }
+        body.modal-open { overflow: hidden; }
+
+        /* NAVIGATION BUTTONS */
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%) translateZ(80px);
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            font-size: 2.5rem;
+            padding: 15px;
+            cursor: pointer;
+            z-index: 3000;
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-btn:hover { background: rgba(255, 255, 255, 0.25); color: #fff; transform: translateY(-50%) translateZ(100px) scale(1.1); }
+        .nav-prev { left: 20px; }
+        .nav-next { right: 20px; }
+    </style>
+</head>
+<body>
+    <header class="header-container" id="mainHeader">
+        <video class="test" autoplay loop muted playsinline><source src="./video/yo.webm" type="video/webm"></video>
+        <div class="links-container" id="linksArea"></div>
+        <div class="page-description">
+            <p>professional schizo and skin creator — contributed to <b>9.3M+</b> visits</p>
+            
+            <div class="description-splitter" id="headerSplitter">
+                <div class="splitter-line"></div>
+                <div class="splitter-icon-container">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="splitter-svg"><path d="m10 20-1.25-2.5L6 18"/><path d="M10 4 8.75 6.5 6 6"/><path d="m14 20 1.25-2.5L18 18"/><path d="m14 4 1.25 2.5L18 6"/><path d="m17 21-3-6h-4"/><path d="m17 3-3 6 1.5 3"/><path d="M2 12h6.5L10 9"/><path d="m20 10-1.5 2 1.5 2"/><path d="M22 12h-6.5L14 15"/><path d="m4 10 1.5 2L4 14"/><path d="m7 21 3-6-1.5-3"/><path d="m7 3 3 6h4"/></svg>
+                </div>
+                <div class="splitter-line"></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="gallery-container" id="portfolioGallery"></main>
+    <footer class="footer-slim">SCÜLWING 2025 ©</footer>
+    
+<div id="previewModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="nav-btn nav-prev" id="prevBtn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+
+            <button class="nav-btn nav-next" id="nextBtn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+
+            <div id="imageCounter" style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.6); font-size: 0.75rem; z-index: 3001; pointer-events: none;"></div>
+
+            <div class="image-container">
+                <img id="modalImage" class="zoomable-image" src="">
+            </div>
+        </div>
+    </div>
+    <script src="index.js"></script>
+</body>
+</html>
