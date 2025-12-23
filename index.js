@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     const linksData = [
-        { image: './images/instagram.png', text: 'instagram', url: 'https://www.instagram.com/sculwing/' },
         { image: './images/discord.png', text: 'discord', url: 'https://t.co/UucgWgI2t4' },
         { image: './images/twitter.png', text: 'twitter', url: 'https://x.com/sculwing' },
         { image: './images/evil.png', text: '?', url: 'evil.html' }
@@ -150,3 +149,4 @@ document.addEventListener('DOMContentLoaded', () => {
     modalContent.onmouseleave = () => resetTilt(modalContent);
 
 });
+
