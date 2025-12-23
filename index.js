@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { images: ['./images/a4.png','./images/a44.png'], description: '<b>Combat Surf</b> - Death.', rotationSpeed: '0.1s', isFavorite: false },
         { images: ['./images/z5.png'], description: '<b>Combat Surf</b> - Frankenshtein.', rotationSpeed: '0.1s', isFavorite: false },
         { images: ['./images/a22.png'], description: '<b>RoStrike</b> - Spirit.', rotationSpeed: '0.1s', isFavorite: false },
-        { images: ['./images/m8.png'], description: '<b>Combat Surf</b> - Mommy.', rotationSpeed: '0.1s', isFavorite: false },
+        { images: ['./images/m8.png'], description: '<b>Combat Surf</b> - Mommy.', rotationSpeed: '0.1s', isFavorite: true },
         { images: ['./images/b5.png'], description: '<b>Combat Surf</b> - Dragon Breath.', rotationSpeed: '0.1s', isFavorite: false },
         { images: ['./images/x2.png'], description: '<b>RoStrike</b> - Lotus.', rotationSpeed: '0.1s', isFavorite: false },
         { images: ['./images/za2.png'], description: '<b>BloxStrike</b> - Iced.', rotationSpeed: '0.1s', isFavorite: false },
@@ -148,4 +148,5 @@ document.addEventListener('DOMContentLoaded', () => {
     modalContent.onclick = (e) => e.stopPropagation();
     modalContent.onmousemove = (e) => { if (!isPanning) applyTilt(modalContent, e, true); };
     modalContent.onmouseleave = () => resetTilt(modalContent);
+
 });
