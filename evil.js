@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: 'AWP - Frankenshtein', src: './images/z5.png', rarity: 'mil-spec' },
         { name: 'USP - Lotus', src: './images/x2.png', rarity: 'classified' },
         { name: 'AWP - Mommy', src: './images/m8.png', rarity: 'covert' },
-        { name: 'Deagle - ?', src: './images/77b.png', rarity: 'covert' },
+        { name: 'Deagle - Spirit', src: './images/77b.png', rarity: 'covert' },
         { name: 'Karambit - Emerald', src: './images/111.png', rarity: 'gold' },
         { name: 'Karambit - Iced', src: './images/za2.png', rarity: 'divinity' }
     ];
@@ -268,4 +268,5 @@ document.addEventListener('DOMContentLoaded', () => {
         fetch: () => { console.table(inventory); return inventory; }
     };
     window.unfreeze = { karambit: { pls: () => { spinSpeedMultiplier = 2; } } };
+
 });
