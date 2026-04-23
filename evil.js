@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    const sfxSpin = createPool('./sfx/spin2.mp3', 15);
+    const sfxSpin = createPool('./sfx/roll.mp3', 15);
     const sfxOpen = createPool('./sfx/zzz22.mp3', 2);
     const sfxReveal = createPool('./sfx/ward.mp3', 2);
 
